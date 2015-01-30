@@ -8,11 +8,11 @@ work) and `curl`.
 
 To use, clone the repo and run `./download.sh`:
 
-`
+```
 $ git clone https://github.com/talos/nyc-dof-1980s-tax-photos.git
 $ cd nyc-dof-1980s-tax-photos
 $ ./download.sh
-`
+```
 
 This will create a folder called `output`, and fill it with the photos.  The
 photos are renamed from their original arbitrary name to one based off the BBL,
