@@ -18,26 +18,31 @@ do
   # (!). To look at a collection, go to its landing page and store the cookie.
   curl -s --compressed --cookie-jar $COOKIEJAR $borough > /dev/null
   x=0
-  cat $COOKIEJAR
   while [ $x -lt 500000 ]
   do
     url="http://nycma.lunaimaging.com/luna/servlet/view/all?pgs=250&os=$x"
-    echo $url
+    echo $url >&2
     for line in $(curl --cookie $COOKIEJAR -s --compressed $url | \
       grep -Po 'alt="dof_[^"]+" src="http://nycma.lunaimaging.com/MediaManager/srvr\?mediafile=[^&]+')
     do
-      name=$(echo $line | grep -Po 'dof_[^"]+')
+      name=$(echo $line | grep -Po '"dof_[^"]+' | cut -b 2-)
       url=$(echo $line | grep -Po 'http://.*' | sed -e 's/Size1/Size3/')
-      if [ ! -e "output/$name.jpg" ]
-      then
-        echo $name
-        curl -s "$url" > output/$name.jpg
-        sleep 0.1
-      else
-        echo skipped $name
-      fi
+      # if [ ! -e "output/$name.jpg" ]
+      # then
+      #   curl -s "$url" > output/$name.jpg
+      #   sleep 0
+      # else
+      #   echo skipped $name
+      # fi
+
+      IFS="_"
+      bbl=($name)
+      IFS="
+"
+      file=$(echo $url | grep -Po '/Size3/.*')
+      echo "${bbl[1]},$(echo ${bbl[2]} | sed 's/^0*//'),$(echo ${bbl[3]} | sed 's/^0*//'),${file}"
     done
     x=$(( x + 250 ))
-    echo "x: $x"
+    echo "x: $x" >&2
   done
 done
