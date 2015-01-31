@@ -1,26 +1,37 @@
 # A scraper for 1980s DoF Tax Photos
 
-This script will download all the photos the Department of Finance took in the
-mid-80s.
+This script will download a CSV mapping to access all photos the Department of
+Finance took in the mid-80s by BBL.
 
 The only pre-requisite to run should be a unix-like box (Linux or MacOSX should
 work) and `curl`.
 
-To use, clone the repo and run `./download.sh`:
+To use:
 
 ```
 $ git clone https://github.com/talos/nyc-dof-1980s-tax-photos.git
 $ cd nyc-dof-1980s-tax-photos
-$ ./download.sh
+$ ./download.sh > mapping.csv 2>errors.log &
 ```
 
-This will create a folder called `output`, and fill it with the photos.  The
-photos are renamed from their original arbitrary name to one based off the BBL,
-like `3-1772-0074.jpg`.  Beware, there are a lot -- at least 24GB worth.  It
-will take a while to download them all.
+This will save a CSV called `mapping.csv` of the format:
+
+```
+borough,block,lot,filename
+```
+
+where the image for that row's BBL would be accessed at
+`http://nycma.lunaimaging.com/MediaManager/srvr?mediafile=$filename`
+substituting `$filename` for the value in the CSV.  For example, the row
+
+```
+2,2260,10,/Size3/RECORDSPHOTOUNITBRO-4-NA/1059/lvd_12_00021.jpg
+```
+
+is BBL 2/2260/10, whose image is at
+[http://nycma.lunaimaging.com/MediaManager/srvr?mediafile=/Size3/RECORDSPHOTOUNITBRO-4-NA/1059/lvd_12_00021.jpg](http://nycma.lunaimaging.com/MediaManager/srvr?mediafile=/Size3/RECORDSPHOTOUNITBRO-4-NA/1059/lvd_12_00021.jpg)
 
 ### What's next
 
-Since it takes a long time to download the images, the goal is to host them
-somewhere else where they are properly indexed.  Each image currently has an
-arbitrary URL, which makes it impossible for an API to do a lookup.
+* If the mapping file is small enough, hosting it in the repo.
+* An nginx.conf proxy configuration.
